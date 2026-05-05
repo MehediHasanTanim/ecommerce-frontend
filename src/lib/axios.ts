@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { useAuthStore } from '@/store/auth-store';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1/';
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8015/api/v1/';
 
 export const axiosInstance = axios.create({
   baseURL,
@@ -37,23 +37,25 @@ axiosInstance.interceptors.response.use(
         const refreshToken = useAuthStore.getState().refreshToken;
         if (!refreshToken) throw new Error('No refresh token available');
 
-        // Note: Replace with actual refresh token endpoint
-        const response = await axios.post(`${baseURL}auth/refresh`, { refresh: refreshToken });
+        // Post to refresh endpoint
+        const response = await axios.post(`${baseURL}auth/refresh/`, { refresh: refreshToken });
         const { access } = response.data;
 
+        // Update tokens in store
         useAuthStore.getState().setTokens(access, refreshToken);
         
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${access}`;
         }
+        // Retry the original request with new token
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        // If refresh fails, logout
         useAuthStore.getState().logout();
         return Promise.reject(refreshError);
       }
     }
 
-    // Standard error normalization
     return Promise.reject(error);
   }
 );

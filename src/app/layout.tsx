@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import QueryProvider from "@/components/providers/query-provider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({
   variable: "--font-sans",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} min-h-screen flex flex-col antialiased`}>
         <QueryProvider>
+          <Toaster position="top-right" />
           <Header />
           <main className="flex-1 container mx-auto px-4 py-8">
             {children}
