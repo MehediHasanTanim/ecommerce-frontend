@@ -30,13 +30,19 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const requestUrl = originalRequest.url || '';
+    const isAuthEndpoint = requestUrl.includes('auth/login') || requestUrl.includes('auth/register') || requestUrl.includes('auth/refresh');
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
-      try {
-        const refreshToken = useAuthStore.getState().refreshToken;
-        if (!refreshToken) throw new Error('No refresh token available');
+      const refreshToken = useAuthStore.getState().refreshToken;
 
+      if (!refreshToken) {
+        useAuthStore.getState().logout();
+        return Promise.reject(error);
+      }
+
+      try {
         // Post to refresh endpoint
         const response = await axios.post(`${baseURL}auth/refresh/`, { refresh: refreshToken });
         const { access } = response.data;

@@ -49,7 +49,8 @@ function LoginForm() {
       router.push(redirect);
     } catch (error) {
       const apiError = mapApiError(error);
-      toast.error(apiError.message === 'Validation failed' ? 'Invalid credentials' : apiError.message);
+      const message = apiError.message === 'Validation failed' ? 'Invalid credentials' : apiError.message;
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
