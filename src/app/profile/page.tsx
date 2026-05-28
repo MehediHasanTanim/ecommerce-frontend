@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ProtectedRoute } from '@/lib/guards/ProtectedRoute';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -91,6 +91,7 @@ function ProfileContent() {
               error={profileForm.formState.errors.full_name?.message}
             />
             <Input
+              id="email"
               label="Email Address (Read-only)"
               value={profile?.email}
               disabled

@@ -74,7 +74,7 @@ function LoginForm() {
 
           <div className="space-y-1">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium">Password</label>
+              <label htmlFor="password" className="text-sm font-medium">Password</label>
               <Link 
                 href="/forgot-password" 
                 className="text-xs text-[var(--color-primary)] hover:underline"
@@ -83,6 +83,7 @@ function LoginForm() {
               </Link>
             </div>
             <Input
+              id="password"
               type="password"
               placeholder="••••••••"
               {...register('password')}

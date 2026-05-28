@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, resetStores } from '@/test/test-utils';
-import { AddressList } from '../components/AddressList';
+import { AddressList } from '../../user/components/AddressList';
 import { addressService } from '@/services/address.service';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { mockAddresses, mockAddress } from '@/test/mocks/address.mock';

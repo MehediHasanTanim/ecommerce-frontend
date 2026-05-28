@@ -35,6 +35,7 @@ vi.mock('react-hot-toast', () => ({
     loading: vi.fn(),
     dismiss: vi.fn(),
   },
+  Toaster: () => null,
 }));
 
 // Cleanup after each test

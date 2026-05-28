@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ProtectedRoute } from '@/lib/guards/ProtectedRoute';
 import { AddressList } from '@/features/user/components/AddressList';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
