@@ -1,6 +1,10 @@
+'use client';
+
 import React from 'react';
+import { useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import type { Category, Brand } from '@/test/mocks/catalog.mock';
+import type { Category, Brand } from '../types/catalog.types';
+import { buildPathWithParams } from '../utils/queryParams';
 
 interface ProductFiltersProps {
   categories: Category[];
@@ -11,6 +15,7 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const pendingParamsRef = useRef<string | null>(null);
 
   const currentCategory = searchParams.get('category') || '';
   const currentBrand = searchParams.get('brand') || '';
@@ -20,20 +25,22 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
   const currentSearch = searchParams.get('q') || '';
 
   function updateParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(pendingParamsRef.current ?? window.location.search);
     if (value) {
       params.set(key, value);
     } else {
       params.delete(key);
     }
     params.delete('page');
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    pendingParamsRef.current = params.toString();
+    router.replace(buildPathWithParams(pathname, params), { scroll: false });
   }
 
   function clearFilters() {
     const params = new URLSearchParams();
     if (currentSearch) params.set('q', currentSearch);
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    pendingParamsRef.current = params.toString();
+    router.replace(buildPathWithParams(pathname, params), { scroll: false });
   }
 
   const hasAnyFilter = currentCategory || currentBrand || currentMinPrice || currentMaxPrice || currentAvailability;
@@ -44,6 +51,7 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
         <h3 className="text-lg font-semibold">Filters</h3>
         {hasAnyFilter && (
           <button
+            data-testid="filters-clear-all"
             onClick={clearFilters}
             className="text-sm text-[var(--color-primary)] hover:underline"
           >
@@ -58,7 +66,8 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
           <label key={cat.id} className="flex items-center gap-2 text-sm cursor-pointer">
             <input
               type="checkbox"
-              checked={currentCategory === cat.slug}
+              data-testid={`filter-category-${cat.slug}`}
+              defaultChecked={currentCategory === cat.slug}
               onChange={() =>
                 updateParam('category', currentCategory === cat.slug ? '' : cat.slug)
               }
@@ -74,7 +83,8 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
           <label key={brand.id} className="flex items-center gap-2 text-sm cursor-pointer">
             <input
               type="checkbox"
-              checked={currentBrand === brand.slug}
+              data-testid={`filter-brand-${brand.slug}`}
+              defaultChecked={currentBrand === brand.slug}
               onChange={() =>
                 updateParam('brand', currentBrand === brand.slug ? '' : brand.slug)
               }
@@ -89,6 +99,7 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
         <div className="flex gap-2">
           <input
             type="number"
+            data-testid="filter-min-price"
             placeholder="Min"
             value={currentMinPrice}
             onChange={(e) => updateParam('minPrice', e.target.value)}
@@ -96,6 +107,7 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
           />
           <input
             type="number"
+            data-testid="filter-max-price"
             placeholder="Max"
             value={currentMaxPrice}
             onChange={(e) => updateParam('maxPrice', e.target.value)}
@@ -109,12 +121,24 @@ export function ProductFilters({ categories, brands }: ProductFiltersProps) {
         <label className="flex items-center gap-2 text-sm cursor-pointer">
           <input
             type="checkbox"
-            checked={currentAvailability === 'in_stock'}
+            data-testid="filter-availability-in_stock"
+            defaultChecked={currentAvailability === 'in_stock'}
             onChange={() =>
               updateParam('availability', currentAvailability === 'in_stock' ? '' : 'in_stock')
             }
           />
           In Stock
+        </label>
+        <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            data-testid="filter-availability-LOW_STOCK"
+            defaultChecked={currentAvailability === 'LOW_STOCK'}
+            onChange={() =>
+              updateParam('availability', currentAvailability === 'LOW_STOCK' ? '' : 'LOW_STOCK')
+            }
+          />
+          Low Stock
         </label>
       </fieldset>
     </aside>

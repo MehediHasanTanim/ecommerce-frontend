@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
@@ -11,12 +13,12 @@ export function SearchInput({ debounceMs = 500 }: SearchInputProps) {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const [value, setValue] = useState(initialQuery);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateSearch = useCallback(
     (q: string) => {
       const trimmed = q.trim();
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search || searchParams.toString());
 
       if (!trimmed && !params.has('q')) return;
 
@@ -48,8 +50,9 @@ export function SearchInput({ debounceMs = 500 }: SearchInputProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} role="search">
+    <form onSubmit={handleSubmit} role="search" className="flex gap-2">
       <input
+        data-testid="catalog-search-input"
         type="text"
         role="textbox"
         value={value}
@@ -57,6 +60,9 @@ export function SearchInput({ debounceMs = 500 }: SearchInputProps) {
         placeholder="Search products..."
         className="w-full border rounded-lg px-4 py-2 text-sm"
       />
+      <button type="submit" data-testid="catalog-search-submit" className="rounded-md bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white">
+        Search
+      </button>
     </form>
   );
 }

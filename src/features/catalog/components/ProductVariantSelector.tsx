@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useEffect } from 'react';
-import type { ProductVariant } from '@/test/mocks/catalog.mock';
+import type { ProductVariant } from '../types/catalog.types';
 
 interface ProductVariantSelectorProps {
   variants: ProductVariant[];
@@ -32,6 +34,7 @@ export function ProductVariantSelector({
           return (
             <button
               key={variant.id}
+              data-testid="product-variant-option"
               type="button"
               disabled={isOutOfStock}
               onClick={() => onVariantChange(variant)}

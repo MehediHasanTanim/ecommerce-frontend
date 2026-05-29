@@ -9,6 +9,7 @@ interface EmptyStateProps {
   actionLabel?: string;
   onAction?: () => void;
   className?: string;
+  testId?: string;
 }
 
 export function EmptyState({
@@ -18,9 +19,10 @@ export function EmptyState({
   actionLabel,
   onAction,
   className = '',
+  testId,
 }: EmptyStateProps) {
   return (
-    <div className={`flex flex-col items-center justify-center p-8 text-center border border-dashed rounded-xl ${className}`}>
+    <div data-testid={testId} className={`flex flex-col items-center justify-center p-8 text-center border border-dashed rounded-xl ${className}`}>
       {Icon && <Icon className="w-12 h-12 text-gray-400 mb-4" />}
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
       {description && <p className="mt-2 text-sm text-gray-500 max-w-sm">{description}</p>}

@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
-import type { Product } from '@/test/mocks/catalog.mock';
+import type { Product } from '../types/catalog.types';
 
 interface ProductCardProps {
   product: Product;
@@ -15,22 +17,29 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/products/${product.slug}`}
+      data-testid="product-card"
       className="group block rounded-xl border border-[var(--border)] bg-[var(--background)] shadow-sm overflow-hidden hover:shadow-md transition-shadow"
     >
       <div className="aspect-square relative bg-gray-100 dark:bg-gray-800">
         <img
+          data-testid="product-card-image"
           src={product.imageUrl || '/images/placeholder.png'}
           alt={product.name}
           className="object-cover w-full h-full"
         />
         {product.availability === 'OUT_OF_STOCK' && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+          <span data-testid="product-card-availability" className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
             Out of Stock
           </span>
         )}
         {product.availability === 'LOW_STOCK' && (
-          <span className="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">
+          <span data-testid="product-card-availability" className="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">
             Low Stock
+          </span>
+        )}
+        {product.availability === 'IN_STOCK' && (
+          <span data-testid="product-card-availability" className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+            In Stock
           </span>
         )}
         {hasDiscount && (
@@ -50,17 +59,19 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="flex items-center gap-2">
           {hasDiscount ? (
             <>
-              <span className="text-lg font-bold text-[var(--color-primary)]">
+              <span data-testid="product-card-effective-price" className="text-lg font-bold text-[var(--color-primary)]">
                 ${product.discountPrice!.toFixed(2)}
               </span>
-              <span className="text-sm text-gray-400 line-through">
+              <span data-testid="product-card-price" className="text-sm text-gray-400 line-through">
                 ${product.price.toFixed(2)}
               </span>
             </>
           ) : (
-            <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-              ${product.price.toFixed(2)}
-            </span>
+            <>
+              <span data-testid="product-card-effective-price" className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                ${product.price.toFixed(2)}
+              </span>
+            </>
           )}
         </div>
       </div>
