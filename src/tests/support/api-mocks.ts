@@ -57,7 +57,7 @@ export async function mockAuthAPIs(page: Page) {
 
 export async function mockUserAPIs(page: Page, userData: any, addresses: any[]) {
   // Profile (me) endpoint
-  await page.route('**/api/v1/users/me/**', async (route) => {
+  await page.route('**/api/v1/me/**', async (route) => {
     console.log(`MOCK: Me ${route.request().method()}`);
     if (route.request().method() === 'GET') {
       await route.fulfill({
@@ -76,7 +76,7 @@ export async function mockUserAPIs(page: Page, userData: any, addresses: any[]) 
   });
 
   // Addresses endpoint
-  await page.route('**/api/v1/users/addresses/**', async (route) => {
+  await page.route('**/api/v1/addresses/**', async (route) => {
     console.log(`MOCK: Addresses ${route.request().method()}`);
     if (route.request().method() === 'GET') {
       await route.fulfill({
