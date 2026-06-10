@@ -8,7 +8,12 @@ export async function loginViaUI(page: Page, user: any) {
   await expect(page).toHaveURL(/profile|$/);
 }
 
+/**
+ * Set auth state in both localStorage (for persist hydration) and
+ * directly in the Zustand store via page.evaluate (for immediate use).
+ */
 export async function setAuthStorage(page: Page, tokens: any, user: any) {
+  // Pre-set localStorage so Zustand persist picks it up on hydration
   await page.addInitScript((data) => {
     window.localStorage.setItem('auth-storage', JSON.stringify({
       state: {

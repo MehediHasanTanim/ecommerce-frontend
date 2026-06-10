@@ -1,5 +1,19 @@
 import '@testing-library/jest-dom';
-import { vi, beforeAll, afterEach } from 'vitest';
+import React from 'react';
+import { vi, beforeAll, afterEach, afterAll } from 'vitest';
+import { server } from '@/tests/mocks/server';
+
+// Start MSW server before all tests
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+
+// Reset handlers and stores after each test
+afterEach(() => {
+  server.resetHandlers();
+  vi.clearAllMocks();
+});
+
+// Close MSW server after all tests
+afterAll(() => server.close());
 
 // Mock next/navigation
 vi.mock('next/navigation', () => {
@@ -20,6 +34,20 @@ vi.mock('next/navigation', () => {
     usePathname: vi.fn(() => ''),
   };
 });
+
+// Mock next/image
+vi.mock('next/image', () => ({
+  default: (props: Record<string, unknown>) => {
+    const { fill, priority, ...rest } = props;
+    return React.createElement('img', rest);
+  },
+}));
+
+// Mock next/link
+vi.mock('next/link', () => ({
+  default: ({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) =>
+    React.createElement('a', { href, ...props }, children),
+}));
 
 // Mock react-hot-toast
 vi.mock('react-hot-toast', () => ({
